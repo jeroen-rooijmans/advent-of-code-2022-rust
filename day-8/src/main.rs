@@ -2,6 +2,7 @@
 
 const INPUT: &str = include_str!("./input.txt");
 
+#[derive(Clone, Copy)]
 enum Direction {
     Up,
     Left,
@@ -15,6 +16,46 @@ fn parse_input(input: &str) -> Vec<Vec<u32>> {
         .lines()
         .map(|line| line.chars().map(|c| c.to_digit(10).unwrap() + 1).collect())
         .collect()
+}
+
+fn viewing_distance(grid: &[Vec<u32>], row: usize, col: usize, direction: Direction) -> usize {
+    let tree_height = grid[row][col];
+    let mut distance = 0;
+    match direction {
+        Direction::Up => {
+            for r in (0..row).rev() {
+                distance += 1;
+                if grid[r][col] >= tree_height {
+                    break;
+                }
+            }
+        }
+        Direction::Down => {
+            for r in (row + 1)..grid.len() {
+                distance += 1;
+                if grid[r][col] >= tree_height {
+                    break;
+                }
+            }
+        }
+        Direction::Left => {
+            for c in (0..col).rev() {
+                distance += 1;
+                if grid[row][c] >= tree_height {
+                    break;
+                }
+            }
+        }
+        Direction::Right => {
+            for c in (col + 1)..grid[0].len() {
+                distance += 1;
+                if grid[row][c] >= tree_height {
+                    break;
+                }
+            }
+        }
+    }
+    distance
 }
 
 fn solve_part_one(input: &str) -> usize {
@@ -66,46 +107,6 @@ fn solve_part_one(input: &str) -> usize {
     }
     // count total number of visible trees
     is_visible.iter().flatten().filter(|&&v| v).count()
-}
-
-fn viewing_distance(grid: &Vec<Vec<u32>>, row: usize, col: usize, direction: Direction) -> usize {
-    let tree_height = grid[row][col];
-    let mut distance = 0;
-    match direction {
-        Direction::Up => {
-            for r in (0..row).rev() {
-                distance += 1;
-                if grid[r][col] >= tree_height {
-                    break;
-                }
-            }
-        }
-        Direction::Down => {
-            for r in (row + 1)..grid.len() {
-                distance += 1;
-                if grid[r][col] >= tree_height {
-                    break;
-                }
-            }
-        }
-        Direction::Left => {
-            for c in (0..col).rev() {
-                distance += 1;
-                if grid[row][c] >= tree_height {
-                    break;
-                }
-            }
-        }
-        Direction::Right => {
-            for c in (col + 1)..grid[0].len() {
-                distance += 1;
-                if grid[row][c] >= tree_height {
-                    break;
-                }
-            }
-        }
-    }
-    distance
 }
 
 fn solve_part_two(input: &str) -> usize {
